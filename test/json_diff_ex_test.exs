@@ -179,6 +179,30 @@ defmodule JsonDiffExTest do
     m2 = %{"a" => [%{"1" => 4.0, "2" => 2}]}
     assert diff(m1, m2, strict_equality: false) == %{}
   end
+  
+  test "check strict_equality within array comparison" do
+    m1 = %{
+      list: [
+        %{"1" => 4, "2" => 2}
+      ]
+    }
+    m2 = %{
+      list: [
+        %{"1" => 4.0, "2" => 2}
+      ]
+    }
+    assert diff(m1, m2, strict_equality: false) == %{}
+  end
+ 
+  test "check List.myers_difference for strict_equality" do
+    a1 = [%{"2" => 2}]
+    a2 = [%{"2" => 2}]
+    assert List.myers_difference(a1, a2) == [eq: [%{"2" => 2}]]
+ 
+    m1 = [%{"1" => 4, "2" => 2}]
+    m2 = [%{"1" => 4.0, "2" => 2}]
+    assert List.myers_difference(m1, m2) == [del: [%{"1" => 4, "2" => 2}], ins: [%{"1" => 4.0, "2" => 2}]]
+  end
 
   test "check basic patch" do
     s1 = ~s({"1": 1})
